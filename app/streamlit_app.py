@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import sys
-from html import escape
 from pathlib import Path
 
 import joblib
@@ -146,36 +145,6 @@ st.markdown(
         border-radius: 8px;
         padding: 0.9rem 1rem;
     }
-    .input-card {
-        background: #ffffff;
-        border: 1px solid #e1e8dc;
-        border-radius: 8px;
-        padding: 0.5rem 0.95rem;
-    }
-    .input-card table {
-        border-collapse: collapse;
-        width: 100%;
-    }
-    .input-card tr {
-        border-bottom: 1px solid #eef2eb;
-    }
-    .input-card tr:last-child {
-        border-bottom: none;
-    }
-    .input-card td {
-        padding: 0.55rem 0;
-        vertical-align: top;
-    }
-    .input-card td:first-child {
-        color: #69736d;
-        font-size: 0.88rem;
-        width: 48%;
-    }
-    .input-card td:last-child {
-        color: #1f2937;
-        font-weight: 650;
-        text-align: right;
-    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -306,22 +275,9 @@ def render_input_summary(display_input: dict) -> None:
         ("Engrais", display_input["utilisation_engrais"]),
         ("Irrigation", display_input["acces_irrigation"]),
     ]
-    table_rows = "\n".join(
-        f"<tr><td>{escape(str(label))}</td><td>{escape(str(value))}</td></tr>"
-        for label, value in rows
-    )
-    st.markdown(
-        f"""
-        <div class="input-card">
-            <table>
-                <tbody>
-                    {table_rows}
-                </tbody>
-            </table>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    summary_df = pd.DataFrame(rows, columns=["Champ", "Valeur"])
+    summary_df["Valeur"] = summary_df["Valeur"].astype(str)
+    st.dataframe(summary_df, hide_index=True, width="stretch")
 
 
 models, scaler, feature_columns, numerical_cols = load_artifacts()
