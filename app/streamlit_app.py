@@ -98,6 +98,35 @@ st.markdown(
         color: #10251b;
         fill: #10251b;
     }
+    [data-testid="stSidebar"] [data-testid="stNumberInput"] button {
+        background: #edf4ed !important;
+        border-color: #d9e3d7 !important;
+        color: #173b2a !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stNumberInput"] button:hover,
+    [data-testid="stSidebar"] [data-testid="stNumberInput"] button:focus {
+        background: #dfeade !important;
+        border-color: #b9cbb7 !important;
+        color: #0f241a !important;
+        box-shadow: none !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stNumberInput"] button svg,
+    [data-testid="stSidebar"] [data-testid="stNumberInput"] button span {
+        color: #173b2a !important;
+        fill: #173b2a !important;
+        opacity: 1 !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stSlider"] [role="slider"] {
+        background: #d6a640 !important;
+        border-color: #f4ead0 !important;
+        box-shadow: 0 0 0 2px rgba(214, 166, 64, 0.22) !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stSlider"] [role="slider"]:hover {
+        background: #c8952c !important;
+        border-color: #f7edcf !important;
+    }
     [data-testid="stSidebar"] .stButton > button {
         background: #2f7d46;
         border: 1px solid #2f7d46;
