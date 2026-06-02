@@ -165,6 +165,11 @@ st.markdown(
         border: 1px solid #b42318;
         color: #7a271a;
     }
+    .result-neutral {
+        background: #ffffff;
+        border: 1px solid #d8e2d4;
+        color: #1f2937;
+    }
     div[data-testid="stProgress"] > div > div > div {
         background-color: #2f7d46;
     }
@@ -348,7 +353,6 @@ st.markdown(
 
 
 selected_model = models[selected_model_name]
-selected_metrics = metrics[MODEL_CONFIG[selected_model_name]["key"]]
 
 raw_input = build_raw_input(
     province,
@@ -369,41 +373,62 @@ if predict_clicked:
     prediction_label, confidence, _ = predict(
         selected_model, raw_input, feature_columns, scaler, numerical_cols
     )
+    submitted_input = raw_input.copy()
+    submitted_input["culture"] = culture
+    submitted_input["utilisation_engrais"] = "Oui" if utilisation_engrais else "Non"
+    submitted_input["acces_irrigation"] = "Oui" if acces_irrigation else "Non"
+    st.session_state["last_prediction"] = {
+        "label": prediction_label,
+        "confidence": confidence,
+        "model_name": selected_model_name,
+        "input": submitted_input,
+    }
+
+
+last_prediction = st.session_state.get("last_prediction")
+
+if last_prediction is None:
+    result_text = "Cliquez sur Prédire pour lancer l'estimation"
+    result_class = "result-neutral"
+    display_confidence = 0.0
+    display_model_name = selected_model_name
+    display_input = raw_input.copy()
+    display_input["culture"] = culture
+    display_input["utilisation_engrais"] = "Oui" if utilisation_engrais else "Non"
+    display_input["acces_irrigation"] = "Oui" if acces_irrigation else "Non"
 else:
-    prediction_label, confidence, _ = predict(
-        selected_model, raw_input, feature_columns, scaler, numerical_cols
-    )
+    result_text = last_prediction["label"]
+    result_class = "result-good" if result_text == "Bonne Récolte" else "result-bad"
+    display_confidence = last_prediction["confidence"]
+    display_model_name = last_prediction["model_name"]
+    display_input = last_prediction["input"]
 
-
-result_class = "result-good" if prediction_label == "Bonne Récolte" else "result-bad"
+display_model = models[display_model_name]
+display_metrics = metrics[MODEL_CONFIG[display_model_name]["key"]]
 
 st.markdown(
     f"""
     <div class="result-banner {result_class}">
-        {prediction_label}
+        {result_text}
     </div>
     """,
     unsafe_allow_html=True,
 )
 
-st.caption("Probabilité associée à la classe prédite")
-st.progress(confidence)
-st.write(f"**{confidence * 100:.1f} %**")
+st.caption("Probabilité associée à la dernière prédiction validée")
+st.progress(display_confidence)
+st.write(f"**{display_confidence * 100:.1f} %**")
 
 metric_col_1, metric_col_2, metric_col_3 = st.columns(3)
-metric_col_1.metric("Accuracy", f"{selected_metrics['accuracy']:.3f}")
-metric_col_2.metric("F1-score", f"{selected_metrics['f1']:.3f}")
-metric_col_3.metric("AUC", f"{selected_metrics['auc']:.3f}")
+metric_col_1.metric("Accuracy", f"{display_metrics['accuracy']:.3f}")
+metric_col_2.metric("F1-score", f"{display_metrics['f1']:.3f}")
+metric_col_3.metric("AUC", f"{display_metrics['auc']:.3f}")
 
 chart_col, input_col = st.columns([1.45, 1])
 with chart_col:
     st.subheader("Variables les plus influentes")
-    st.pyplot(plot_feature_importance(selected_model, feature_columns, selected_model_name))
+    st.pyplot(plot_feature_importance(display_model, feature_columns, display_model_name))
 
 with input_col:
     st.subheader("Entrée utilisée")
-    display_input = raw_input.copy()
-    display_input["culture"] = culture
-    display_input["utilisation_engrais"] = "Oui" if utilisation_engrais else "Non"
-    display_input["acces_irrigation"] = "Oui" if acces_irrigation else "Non"
     render_input_summary(display_input)
