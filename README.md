@@ -10,6 +10,8 @@ Ce projet met en place un pipeline complet de Machine Learning pour prédire si 
 
 L'application Streamlit permet de saisir les caractéristiques d'une parcelle agricole, de choisir un modèle et d'obtenir une prédiction avec la probabilité associée, les métriques du modèle et l'importance des variables.
 
+![Interface de l'application Streamlit avec une prédiction](app_interface.png)
+
 ## Project Structure
 
 ```text
@@ -40,6 +42,8 @@ agri-burundi-ml/
 │   ├── y_train.csv                      Cible d'entraînement sauvegardée.
 │   └── y_test.csv                       Cible de test sauvegardée.
 ├── metrics.json                         Résultats d'évaluation des trois modèles.
+├── app_interface.png                    Capture d'écran de l'application avec une prédiction.
+├── enonce_TP_agriculture_burundi.md     Énoncé du TP et contexte du problème à résoudre.
 ├── requirements.txt                     Dépendances Python du projet.
 ├── .gitignore                           Fichiers locaux exclus du suivi Git.
 └── README.md                            Documentation du projet.
